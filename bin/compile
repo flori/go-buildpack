@@ -74,7 +74,11 @@ else
 fi
 
 file=${GOFILE:-$ver.$(uname|tr A-Z a-z)-amd64$(platext $ver).tar.gz}
-url=${GOURL:-http://go.googlecode.com/files/$file}
+if test "$ver" == "go1.3" ; then
+  url=${GOURL:-http://golang.org/dl/$file}
+else
+  url=${GOURL:-http://go.googlecode.com/files/$file}
+fi
 
 if test -e $build/bin && ! test -d $build/bin
 then
@@ -90,7 +94,7 @@ else
     mkdir -p $cache/$ver
     cd $cache/$ver
     echo -n "-----> Installing $ver..."
-    curl -sO $url
+    curl -L -sO $url
     tar zxf $file
     rm -f $file
     echo " done"
