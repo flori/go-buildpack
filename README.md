@@ -1,18 +1,12 @@
-[![travis ci](https://travis-ci.org/heroku/heroku-buildpack-go.svg?branch=master)](https://travis-ci.org/heroku/heroku-buildpack-go)
+# Buildpack: Go
 
-# Heroku Buildpack for Go
-
-![Heroku Buildpack for Go](https://cloud.githubusercontent.com/assets/51578/15877053/53506724-2cdf-11e6-878c-e2ef60ba741f.png)
-
-This is the official [Heroku buildpack][buildpack] for [Go][go].
+This is a buildpack for [Go][go].
 
 ## Getting Started
 
-Follow the guide at
-<https://devcenter.heroku.com/articles/getting-started-with-go>
+Follow the guide at <http://doc.scalingo.com/languages/go>.
 
-There's also a hello world sample app at
-<https://github.com/heroku/go-getting-started>
+There's also a hello world sample app at <https://github.com/Scalingo/sample-go-martini>.
 
 ## Example
 
@@ -23,21 +17,19 @@ vendor
 Procfile
 web.go
 
-$ heroku create
-Creating polar-waters-4785...
-...
+$ scalingo create my-go-app
+$ git push scalingo master
+```
 
-$ git push heroku master
-...
+```
 -----> Go app detected
 -----> Installing go1.8... done
------> Running: go install -tags heroku ./...
+-----> Running: go install -tags paas ./...
 -----> Discovering process types
        Procfile declares types -> web
-
------> Compressing... done, 1.6MB
------> Launching... done, v4
-       https://polar-waters-4785.herokuapp.com/ deployed to Heroku
+        Build complete, shipping your container...
+         Waiting for your application to boot...
+          <-- https://my-go-app.scalingo.io -->
 ```
 
 This buildpack will detect your repository as Go if you are using either:
@@ -47,9 +39,9 @@ This buildpack will detect your repository as Go if you are using either:
 - [GB][gb]
 - [Godep][godep]
 
-This buildpack adds a `heroku` [build constraint][build-constraint], to enable
-heroku-specific code. See the [App Engine build constraints
-article][app-engine-build-constraints] for more.
+This buildpack adds a `paas` [build constraint][https://golang.org/pkg/go/build/], to enable
+Scalingo-specific code. See the [App Engine build constraints
+article][https://blog.golang.org/the-app-engine-sdk-and-workspaces-gopath] for more.
 
 ## govendor specifics
 
@@ -59,17 +51,17 @@ feature to track build specific bits. These bits are encoded in the following
 top level json keys:
 
 * `rootPath` (String): the root package name of the packages you are pushing to
-  Heroku. You can find this locally with `go list -e .`. There is no default for
+  Scalingo. You can find this locally with `go list -e .`. There is no default for
   this and it must be specified. Recent versions of govendor automatically fill
   in this field for you. You can re-run `govendor init` after upgrading to have
   this field filled in automatically, or it will be filled the next time you use
    govendor to modify a dependency.
 
-* `heroku.goVersion` (String): the major version of go you would like Heroku to
+* `scalingo.goVersion` (String): the major version of go you would like Scalingo to
   use when compiling your code: if not specified defaults to the most recent
   supported version of Go.
 
-* `heroku.install` (Array of Strings): a list of the packages you want to install.
+* `scalingo.install` (Array of Strings): a list of the packages you want to install.
   If not specified, this defaults to `["."]`. Other common choices are:
   `["./cmd/..."]` (all packages and sub packages in the `cmd` directory) and
   `["./..."]` (all packages and sub packages of the current directory). The exact
@@ -78,14 +70,14 @@ top level json keys:
 
 
 Example with everything, for a project using `go1.8`, located at
-`$GOPATH/src/github.com/heroku/go-getting-started` and requiring a single package
+`$GOPATH/src/github.com/Scalingo/sample-go-martini` and requiring a single package
 spec of `./...` to install.
 
 ```json
 {
     ...
-    "rootPath": "github.com/heroku/go-getting-started",
-    "heroku": {
+    "rootPath": "github.com/Scalingo/sample-go-martini",
+    "scalingo": {
         "install" : [ "./..." ],
         "goVersion": "go1.8"
          },
@@ -111,8 +103,8 @@ latest released minor version in that series. Setting `$GOVERSION` to a specific
 minor Go version will pin Go to that version. Examples:
 
 ```console
-$ heroku config:set GOVERSION=go1.8   # Will use go1.8.X, Where X is that latest minor release in the 1.8 series
-$ heroku config:set GOVERSION=go1.7.5 # Pins to go1.7.5
+$ scalingo env-set GOVERSION=go1.8   # Will use go1.8.X, Where X is that latest minor release in the 1.8 series
+$ scalingo env-set GOVERSION=go1.7.5 # Pins to go1.7.5
 ```
 
 Installation defaults to `.`. This can be overridden by setting the
@@ -120,8 +112,8 @@ Installation defaults to `.`. This can be overridden by setting the
 go tool chain to install. Example:
 
 ```console
-$ heroku config:set GO_INSTALL_PACKAGE_SPEC=./...
-$ git push heroku master
+$ scalingo env-set GO_INSTALL_PACKAGE_SPEC=./...
+$ git push scalingo master
 ```
 
 ## Usage with other vendoring systems
@@ -131,9 +123,9 @@ with the following contents, adjusted as needed for your project's root path.
 
 ```json
 {
-    "comment": "For other heroku options see: https://devcenter.heroku.com/articles/go-dependencies-via-govendor#build-configuration",
+    "comment": "For other Scalingo options see: http://doc.scalingo.com/languages/go",
     "rootPath": "github.com/yourOrg/yourRepo",
-    "heroku": {
+    "scalingo": {
         "sync": false
     }
 }
@@ -159,9 +151,9 @@ The buildpack supports building with C dependencies via [cgo][cgo]. You can set
 config vars to specify CGO flags to specify paths for vendored dependencies. The
 literal text of `${build_dir}` will be replaced with the directory the build is
 happening in. For example, if you added C headers to an `includes/` directory,
-add the following config to your app: `heroku config:set CGO_CFLAGS='-I${
-build_dir}/includes'`. Note the usage of `''` to ensure they are not converted to
-local environment variables.
+add the following config to your app: `scalingo env-set CGO_CFLAGS='-I${
+build_dir}/includes'`. Note the used of `''` to ensure they are not converted to
+local environment variables
 
 ## Using a development version of Go
 
@@ -190,23 +182,6 @@ pushing code. If `GO_LINKER_SYMBOL` is set, but `GO_LINKER_VALUE` isn't set then
 This can be used to embed the commit sha, or other build specific data directly
 into the compiled executable.
 
-## Testpack
-
-This buildpack also supports the testpack API.
-
-
-## Deploying
-
-```console
-$ heroku buildkits:publish heroku/go
-$ # This tells you the new version number
-$ # Update the Changelog with it
-$ git commit -am "vXXX"
-$ git tag vXXX
-$ git push && git push --tags
-$ # Add a heroku changelog item (if notable)
-```
-
 ### New Go version
 
 1. Edit `files.json`, and add an entry for the new version, including the SHA,
@@ -219,15 +194,15 @@ $ # Add a heroku changelog item (if notable)
 1. Commit and push.
 
 [go]: http://golang.org/
-[buildpack]: http://devcenter.heroku.com/articles/buildpacks
+[buildpack]: http://doc.scalingo.com/buildpacks/
 [go-linker]: https://golang.org/cmd/ld/
 [godep]: https://github.com/tools/godep
 [govendor]: https://github.com/kardianos/govendor
 [gb]: https://getgb.io/
-[quickstart]: http://mmcgrana.github.com/2012/09/getting-started-with-go-on-heroku.html
+[quickstart]: http://doc.scalingo.com/languages/go/
 [build-constraint]: http://golang.org/pkg/go/build/
 [app-engine-build-constraints]: http://blog.golang.org/2013/01/the-app-engine-sdk-and-workspaces-gopath.html
-[source-version]: https://devcenter.heroku.com/articles/buildpack-api#bin-compile
+[source-version]: http://doc.scalingo.com/app/build-environment
 [cgo]: http://golang.org/cmd/cgo/
 [vendor.json]: https://github.com/kardianos/vendor-spec
 [gopgsqldriver]: https://github.com/jbarham/gopgsqldriver

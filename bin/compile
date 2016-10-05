@@ -31,17 +31,15 @@ handleDefaultPkgSpec() {
         warn ""
         case "${TOOL}" in
             govendor)
-                warn "To install a different package spec set 'heroku.install' in 'vendor/vendor.json'"
+                warn "To install a different package spec set 'scalingo.install' in 'vendor/vendor.json'"
                 warn ""
-                warn "For more details see: https://devcenter.heroku.com/articles/go-apps-with-govendor#build-configuration"
+                warn "For more details see: http://doc.scalingo.com/languages/govendor"
                 warn ""
             ;;
             glide)
                 warn "To install a different package spec for the next build run:"
                 warn ""
-                warn "'heroku config:set GO_INSTALL_PACKAGE_SPEC=\"<pkg spec>\"'"
-                warn ""
-                warn "For more details see: https://devcenter.heroku.com/articles/go-dependencies-via-glide"
+                warn "'scalingo env-set GO_INSTALL_PACKAGE_SPEC=\"<pkg spec>\"'"
                 warn ""
             ;;
         esac
@@ -101,7 +99,7 @@ reportVer() {
         *)
             warn ""
             warn "Deprecated or unsupported version of go ($1)"
-            warn "See https://devcenter.heroku.com/articles/go-support#go-versions for supported version information."
+            warn "See http://doc.scalingo.com/languages/go/ for supported version information."
             warn ""
         ;;
     esac
@@ -235,7 +233,7 @@ setGoVersionFromEnvironment() {
         warn ""
         warn "'GOVERSION' isn't set, defaulting to '${DefaultGoVersion}'"
         warn ""
-        warn "Run 'heroku config:set GOVERSION=goX.Y' to set the Go version to use"
+        warn "Run 'scalingo env-set GOVERSION=goX.Y' to set the Go version to use"
         warn "for future builds"
         warn ""
     fi
@@ -248,7 +246,7 @@ warnGoVersionOverride() {
         warn "     \$GOVERSION = ${GOVERSION}"
         warn ""
         warn "If this isn't what you want please run:'"
-        warn "  heroku config:unset GOVERSION -a <app>"
+        warn "  scalingo env-unset GOVERSION -a <app>"
         warn ""
     fi
 }
@@ -259,7 +257,7 @@ warnPackageSpecOverride() {
         warn "     \$GO_INSTALL_PACKAGE_SPEC = ${GO_INSTALL_PACKAGE_SPEC}"
         warn ""
         warn "If this isn't what you want please run:'"
-        warn "  heroku config:unset GO_INSTALL_PACKAGE_SPEC -a <app>"
+        warn "  scalingo env-unset GO_INSTALL_PACKAGE_SPEC -a <app>"
         warn ""
     fi
 }
@@ -307,7 +305,7 @@ ensureGo "${ver}"
 mkdir -p "${build}/bin"
 
 # If $GO_LINKER_SYMBOL and GO_LINKER_VALUE are set, tell the linker to DTRT
-FLAGS=(-tags heroku)
+FLAGS=(-tags paas)
 if [ -n "${GO_LINKER_SYMBOL}" -a -n "${GO_LINKER_VALUE}" ]; then
     case "${ver}" in
         go1.0*|go1.1*|go1.2*|go1.3*|go1.4*)
@@ -347,7 +345,7 @@ case "${TOOL}" in
             if [ -n "${GO15VENDOREXPERIMENT}" ]; then
                 warn ""
                 warn "GO15VENDOREXPERIMENT is set, but is not supported by ${ver}"
-                warn "run \`heroku config:unset GO15VENDOREXPERIMENT\` to unset."
+                warn "run \`scalingo env-unset GO15VENDOREXPERIMENT\` to unset."
                 warn ""
             fi
         fi
@@ -371,14 +369,14 @@ case "${TOOL}" in
         eval "$(setupGOPATH ${name})"
         vendorJSON="${src}/vendor/vendor.json"
 
-        pkgs=${GO_INSTALL_PACKAGE_SPEC:-$(<${vendorJSON} jq -r 'if .heroku.install then .heroku.install | join(" ") else "default" end')}
+        pkgs=${GO_INSTALL_PACKAGE_SPEC:-$(<${vendorJSON} jq -r 'if .scalingo.install then .scalingo.install | join(" ") else "default" end')}
         warnPackageSpecOverride
         handleDefaultPkgSpec
 
         unset GIT_DIR # unset git dir or it will mess with goinstall
         cd "${src}"
 
-        if [ "$(<${vendorJSON} jq -r '.heroku.sync')" != "false" ]; then
+        if [ "$(<${vendorJSON} jq -r '.scalingo.sync')" != "false" ]; then
             step "Fetching any unsaved dependencies (govendor sync)"
             govendor sync
         fi
@@ -419,8 +417,8 @@ case "${TOOL}" in
         gb build "${FLAGS[@]}" 2>&1
 
         step "Post Compile Cleanup"
-        for f in bin/*-heroku; do
-            mv "$f" "${f/-heroku}"
+        for f in bin/*-scalingo; do
+            mv "$f" "${f/-scalingo}"
         done
         rm -rf pkg
     ;;
@@ -439,10 +437,10 @@ mkdir -p $build/.profile.d
 echo 'PATH=$PATH:$HOME/bin' > $build/.profile.d/go.sh
 
 if [ "${GO_INSTALL_TOOLS_IN_IMAGE}" = "true" ]; then
-    start "Copying go tool chain to \$GOROOT=\$HOME/.heroku/go"
-        mkdir -p "${build}/.heroku/go"
-        cp -a "${GOROOT}/"* "${build}/.heroku/go"
-        echo 'export GOROOT=$HOME/.heroku/go' > "${build}/.profile.d/goroot.sh"
+    start "Copying go tool chain to \$GOROOT=\$HOME/.scalingo/go"
+        mkdir -p "${build}/.scalingo/go"
+        cp -a "${GOROOT}/"* "${build}/.scalingo/go"
+        echo 'export GOROOT=$HOME/.scalingo/go' > "${build}/.profile.d/goroot.sh"
         echo 'PATH=$PATH:$GOROOT/bin' >> "${build}/.profile.d/goroot.sh"
     finished
     if which ${TOOL} &> /dev/null; then
@@ -463,7 +461,7 @@ if needConcurrency ${ver}; then
     cp $buildpack/vendor/concurrency.sh $build/.profile.d/
 fi
 
-t="${build}/.heroku/go"
+t="${build}/.scalingo/go"
 mkdir -p "${t}"
 t="${t}/.meta"
 echo "TOOL=${TOOL}" > "${t}"

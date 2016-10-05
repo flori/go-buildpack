@@ -162,7 +162,7 @@ setGoVersionFromEnvironment() {
         warn ""
         warn "'GOVERSION' isn't set, defaulting to '${DefaultGoVersion}'"
         warn ""
-        warn "Run 'heroku config:set GOVERSION=goX.Y' to set the Go version to use"
+        warn "Run 'scalingo env-set GOVERSION=goX.Y' to set the Go version to use"
         warn "for future builds"
         warn ""
     fi
@@ -194,18 +194,18 @@ determineTool() {
             err "Recent versions of govendor add this field automatically, please upgrade"
             err "and re-run 'govendor init'."
             err ""
-            err "For more details see: https://devcenter.heroku.com/articles/go-apps-with-govendor#build-configuration"
+            err "For more details see: http://doc.scalingo.com/languages/govendor#configuration"
             exit 1
         fi
-        ver=${GOVERSION:-$(<${vendorJSON} jq -r .heroku.goVersion)}
+        ver=${GOVERSION:-$(<${vendorJSON} jq -r .scalingo.goVersion)}
         warnGoVersionOverride
         if [ "${ver}" =  "null" -o -z "${ver}" ]; then
             ver=${DefaultGoVersion}
-            warn "The 'heroku.goVersion' field is not specified in 'vendor/vendor.json'."
+            warn "The 'scalingo.goVersion' field is not specified in 'vendor/vendor.json'."
             warn ""
             warn "Defaulting to ${ver}"
             warn ""
-            warn "For more details see: https://devcenter.heroku.com/articles/go-apps-with-govendor#build-configuration"
+            warn "For more details see: http://doc.scalingo.com/languages/govendor#configuration"
             warn ""
         fi
     elif [ -f "${glideYAML}" ]; then
@@ -216,7 +216,7 @@ determineTool() {
         setGoVersionFromEnvironment
     else
         err "Godep, GB or govendor are required. For instructions:"
-        err "https://devcenter.heroku.com/articles/go-support"
+        err "http://doc.scalingo.com/languages/go/"
         exit 1
     fi
 }
