@@ -2,6 +2,31 @@
 
 ## Unreleased
 
+## v70 (2017-06-26)
+
+Add go1.9beta2 and default go1.9 to it.
+
+## v69 (2017-06-15)
+
+Support "go1.9" as a possible version, mapping to "go1.9beta1".
+Support "go1.9beta1" as a possible version.
+
+## v68 (2017-06-06)
+
+Add $GLIDE_SKIP_INSTALL for when glide users need to skip the `glide install` step.
+
+## v67 (2017-05-25)
+
+Support go1.8.3 and default to it.
+
+## v66 (2017-05-24)
+
+Support go 1.8.2 and go1.7.6. Default to both.
+
+## v65 (2017-05-16)
+
+Support `heroku.additionalTools` for `github.com/mattes/migrate` for govendor.
+
 ## v64 (2017-04-10)
 
 Support go 1.8.1. Default to go1.8.1.

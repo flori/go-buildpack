@@ -75,9 +75,9 @@ fi
 
 echo "Publishing ${BUILDPACK}"
 heroku buildkits:publish ${BUILDPACK}
-PVER=$(heroku buildkits:revisions ${BUILDPACK} | awk '/^v/ {print $1; exit}')
+PVER="$(heroku buildkits:revisions ${BUILDPACK} | awk '/^v/ {print $1; exit}')"
 
-if [ "${PVER}" != "${NVER}" ]; then
+if [ "${PVER}" != "v${NVER}" ]; then
   errExit "Published version (${PVER}) and calculated version (${NVER}) do not match."
 fi
 

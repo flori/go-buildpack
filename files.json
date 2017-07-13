@@ -1,4 +1,20 @@
 {
+    "go1.9beta2.linux-amd64.tar.gz": {
+        "URL": "https://storage.googleapis.com/golang/go1.9beta2.linux-amd64.tar.gz",
+        "SHA": "023f778f063d2234e7c95f572a92298b307807693f7e045a88c90ecd7a08f29d"
+    },
+    "go1.9beta1.linux-amd64.tar.gz": {
+        "URL": "https://storage.googleapis.com/golang/go1.9beta1.linux-amd64.tar.gz",
+        "SHA": "85719a2c704ad1352052e185c760d7c65b9d8a18b491287a7e5f6775ccc27d3b"
+    },
+    "go1.8.3.linux-amd64.tar.gz": {
+        "URL": "https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz",
+        "SHA": "1862f4c3d3907e59b04a757cfda0ea7aa9ef39274af99a784f5be843c80c6772"
+    },
+    "go1.8.2.linux-amd64.tar.gz": {
+        "URL": "https://storage.googleapis.com/golang/go1.8.2.linux-amd64.tar.gz",
+        "SHA": "5477d6c9a4f96fa120847fafa88319d7b56b5d5068e41c3587eebe248b939be7"
+    },
     "go1.8.1.linux-amd64.tar.gz": {
         "URL": "https://storage.googleapis.com/golang/go1.8.1.linux-amd64.tar.gz",
         "SHA": "a579ab19d5237e263254f1eac5352efcf1d70b9dacadb6d6bb12b0911ede8994"
@@ -26,6 +42,10 @@
     "go1.8beta1.linux-amd64.tar.gz": {
         "URL": "https://storage.googleapis.com/golang/go1.8beta1.linux-amd64.tar.gz",
         "SHA": "768d8d73ccea69c9a0941f9ef2333b1ff8c82120abfcdedd4e91af039c674a8d"
+    },
+    "go1.7.6.linux-amd64.tar.gz": {
+        "URL": "https://storage.googleapis.com/golang/go1.7.6.linux-amd64.tar.gz",
+        "SHA": "ad5808bf42b014c22dd7646458f631385003049ded0bb6af2efc7f1f79fa29ea"
     },
     "go1.7.5.linux-amd64.tar.gz": {
         "URL": "https://storage.googleapis.com/golang/go1.7.5.linux-amd64.tar.gz",
@@ -193,5 +213,9 @@
         "URL": "https://github.com/tools/godep/releases/download/v75/godep_linux_amd64",
         "SHA": "4f0b1a01461f2a1892c8065989b8561a88a1c1f09e2a36f01042cd759ea1858c",
         "LocalName": "godep"
+    },
+    "migrate-v3.0.0-linux-amd64.tar.gz": {
+        "URL": "https://github.com/mattes/migrate/releases/download/v3.0.0/migrate.linux-amd64.tar.gz",
+        "SHA": "13fbabe2db0ee3f79611c8171b0596939a3f384025f62925ed136267681e4fbf"
     }
 }

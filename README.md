@@ -68,6 +68,12 @@ top level json keys:
    choice depends on the layout of your repository though. Please note that `./...`
    includes any packages in your `vendor` directory.
 
+* `scalingo.additionalTools` (Array of Strings): a list of additional tools that
+  the buildpack is aware of that you want it to install. If the tool has
+  multiple versions an optional `@<version>` suffix can be specified to select
+  that specific version of the tool. Otherwise the buildpack's default version
+  is chosen. Currently the only supported tool is `github.com/mattes/migrate` at
+  `v3.0.0` (also the default version).
 
 Example with everything, for a project using `go1.8`, located at
 `$GOPATH/src/github.com/Scalingo/sample-go-martini` and requiring a single package
@@ -105,6 +111,15 @@ minor Go version will pin Go to that version. Examples:
 ```console
 $ scalingo env-set GOVERSION=go1.8   # Will use go1.8.X, Where X is that latest minor release in the 1.8 series
 $ scalingo env-set GOVERSION=go1.7.5 # Pins to go1.7.5
+```
+
+`glide install` will be run to ensure that all dependencies are properly
+installed. If you need the buildpack to skip the `glide install` you can set
+`$GLIDE_SKIP_INSTALL` to `true`. Example:
+
+```console
+$ scalingo env-set GLIDE_SKIP_INSTALL=true
+$ git push scalingo master
 ```
 
 Installation defaults to `.`. This can be overridden by setting the
@@ -181,6 +196,17 @@ pushing code. If `GO_LINKER_SYMBOL` is set, but `GO_LINKER_VALUE` isn't set then
 
 This can be used to embed the commit sha, or other build specific data directly
 into the compiled executable.
+
+## Testpack
+
+This buildpack also supports the testpack API.
+
+
+## Deploying
+
+```console
+$ make publish # && follow the prompts
+```
 
 ### New Go version
 
