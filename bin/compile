@@ -429,6 +429,9 @@ case "${TOOL}" in
         name=$(glide name 2>/dev/null)
 
         eval "$(setupGOPATH ${name})"
+        echo "$GOPATH"
+        ls -l "$GOPATH"
+        ls -l "$GOPATH/bin"
 
         pkgs=${GO_INSTALL_PACKAGE_SPEC:-"default"}
         handleDefaultPkgSpec
